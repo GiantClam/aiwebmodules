@@ -7,38 +7,49 @@ export function createPrismaTaskRepository(): TaskRepository {
     async create(data: CreateTaskParams & { status?: string }): Promise<TaskRecord> {
       const rec = await prisma.fluxData.create({
         data: {
-          userId: data.userId || null,
+          userId: data.userId || "",
           model: data.model,
-          r2Url: data.inputUrl || null,
+          inputPrompt: data.inputUrl || null,
           imageUrl: null,
           taskStatus: data.status || 'processing',
           executeStartTime: BigInt(Date.now()),
           executeEndTime: null,
           replicateId: '',
           isPrivate: true,
-        } as any,
+          aspectRatio: "1:1", // 必需字段
+        },
       });
       return {
         id: rec.id,
         userId: rec.userId || undefined,
         model: rec.model,
         status: rec.taskStatus,
-        inputUrl: rec.r2Url || undefined,
+        inputUrl: rec.inputPrompt || undefined,
         outputUrl: rec.imageUrl || undefined,
         externalTaskId: rec.replicateId || undefined,
         errorMsg: rec.errorMsg || undefined,
       };
     },
     async update(id, data): Promise<void> {
+      // 确保状态格式正确（数据库使用 "Succeeded", "Failed", "Processing"）
+      const taskStatus = data.status === "succeeded" ? "Succeeded"
+                      : data.status === "failed" ? "Failed"
+                      : data.status === "processing" ? "Processing"
+                      : data.status === "queued" ? "Processing"
+                      : data.status === "pending" ? "Processing"
+                      : data.status || "Processing";
+      
       await prisma.fluxData.update({
-        where: { id: id as number },
+        where: { id: typeof id === "number" ? id : parseInt(String(id)) },
         data: {
-          taskStatus: data.status,
+          taskStatus: taskStatus,
           imageUrl: data.outputUrl ?? undefined,
           replicateId: data.externalTaskId ?? undefined,
           errorMsg: data.errorMsg ?? undefined,
-          executeEndTime: data.status && ['succeeded','failed'].includes(data.status) ? BigInt(Date.now()) : undefined,
-        } as any,
+          executeEndTime: taskStatus === "Succeeded" || taskStatus === "Failed" 
+            ? BigInt(Date.now()) 
+            : undefined,
+        },
       });
     },
     async findByExternalId(model: string, externalId: string): Promise<TaskRecord | null> {
@@ -49,7 +60,7 @@ export function createPrismaTaskRepository(): TaskRepository {
         userId: rec.userId || undefined,
         model: rec.model,
         status: rec.taskStatus,
-        inputUrl: rec.r2Url || undefined,
+        inputUrl: rec.inputPrompt || undefined,
         outputUrl: rec.imageUrl || undefined,
         externalTaskId: rec.replicateId || undefined,
         errorMsg: rec.errorMsg || undefined,
