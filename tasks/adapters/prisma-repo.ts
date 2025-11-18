@@ -1,11 +1,13 @@
 import { prisma } from "@/db/prisma";
+import { withRetry } from "@/lib/db-connection";
 import type { CreateTaskParams, TaskRecord, TaskRepository } from "../sdk";
 
 // 默认实现针对 flux_data（用于视频去水印等任务）
 export function createPrismaTaskRepository(): TaskRepository {
   return {
     async create(data: CreateTaskParams & { status?: string }): Promise<TaskRecord> {
-      const rec = await prisma.fluxData.create({
+      const rec = await withRetry(async () => {
+        return await prisma.fluxData.create({
         data: {
           userId: data.userId || "",
           model: data.model,
@@ -18,6 +20,7 @@ export function createPrismaTaskRepository(): TaskRepository {
           isPrivate: true,
           aspectRatio: "1:1", // 必需字段
         },
+        });
       });
       return {
         id: rec.id,
@@ -39,7 +42,8 @@ export function createPrismaTaskRepository(): TaskRepository {
                       : data.status === "pending" ? "Processing"
                       : data.status || "Processing";
       
-      await prisma.fluxData.update({
+      await withRetry(async () => {
+        return await prisma.fluxData.update({
         where: { id: typeof id === "number" ? id : parseInt(String(id)) },
         data: {
           taskStatus: taskStatus,
@@ -50,10 +54,13 @@ export function createPrismaTaskRepository(): TaskRepository {
             ? BigInt(Date.now()) 
             : undefined,
         },
+        });
       });
     },
     async findByExternalId(model: string, externalId: string): Promise<TaskRecord | null> {
-      const rec = await prisma.fluxData.findFirst({ where: { model, replicateId: externalId } });
+      const rec = await withRetry(async () => {
+        return await prisma.fluxData.findFirst({ where: { model, replicateId: externalId } });
+      });
       if (!rec) return null;
       return {
         id: rec.id,
