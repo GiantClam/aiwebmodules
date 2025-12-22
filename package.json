@@ -1,5 +1,5 @@
 {
-  "name": "@your-org/modules",
+  "name": "@giantclam/aiwebmodules",
   "version": "1.0.0",
   "description": "可复用的业务模块集合，包含 RunningHub、Tasks、Auth、Payments、Cloudflare Storage 等模块",
   "main": "./index.ts",
@@ -33,12 +33,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-org/modules.git"
+    "url": "https://github.com/GiantClam/aiwebmodules.git"
   },
   "bugs": {
-    "url": "https://github.com/your-org/modules/issues"
+    "url": "https://github.com/GiantClam/aiwebmodules/issues"
   },
-  "homepage": "https://github.com/your-org/modules#readme",
+  "homepage": "https://github.com/GiantClam/aiwebmodules#readme",
   "dependencies": {
     "stripe": "^15.8.0"
   },

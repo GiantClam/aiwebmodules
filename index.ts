@@ -6,10 +6,10 @@
  * 示例：
  * ```ts
  * // 从根目录导入
- * import { runninghubAPI } from '@your-org/modules';
+ * import { runninghubAPI } from '@giantclam/aiwebmodules';
  * 
  * // 或从子模块导入（推荐，tree-shaking 更友好）
- * import { runninghubAPI } from '@your-org/modules/runninghub';
+ * import { runninghubAPI } from '@giantclam/aiwebmodules/runninghub';
  * ```
  */
 

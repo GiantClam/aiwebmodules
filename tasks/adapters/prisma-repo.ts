@@ -2,24 +2,24 @@ import { prisma } from "@/db/prisma";
 import { withRetry } from "@/lib/db-connection";
 import type { CreateTaskParams, TaskRecord, TaskRepository } from "../sdk";
 
-// 默认实现针对 flux_data（用于视频去水印等任务）
+// 默认实现针对任务数据（用于视频去水印等任务）
 export function createPrismaTaskRepository(): TaskRepository {
   return {
     async create(data: CreateTaskParams & { status?: string }): Promise<TaskRecord> {
       const rec = await withRetry(async () => {
-        return await prisma.fluxData.create({
-        data: {
-          userId: data.userId || "",
-          model: data.model,
-          inputPrompt: data.inputUrl || null,
-          imageUrl: null,
-          taskStatus: data.status || 'processing',
-          executeStartTime: BigInt(Date.now()),
-          executeEndTime: null,
-          replicateId: '',
-          isPrivate: true,
-          aspectRatio: "1:1", // 必需字段
-        },
+        return await prisma.taskData.create({
+          data: {
+            userId: data.userId || "",
+            model: data.model,
+            inputPrompt: data.inputUrl || null,
+            imageUrl: null,
+            taskStatus: data.status || 'processing',
+            executeStartTime: BigInt(Date.now()),
+            executeEndTime: null,
+            replicateId: '',
+            isPrivate: true,
+            aspectRatio: "1:1", // 必需字段
+          },
         });
       });
       return {
@@ -43,23 +43,23 @@ export function createPrismaTaskRepository(): TaskRepository {
                       : data.status || "Processing";
       
       await withRetry(async () => {
-        return await prisma.fluxData.update({
-        where: { id: typeof id === "number" ? id : parseInt(String(id)) },
-        data: {
-          taskStatus: taskStatus,
-          imageUrl: data.outputUrl ?? undefined,
-          replicateId: data.externalTaskId ?? undefined,
-          errorMsg: data.errorMsg ?? undefined,
-          executeEndTime: taskStatus === "Succeeded" || taskStatus === "Failed" 
-            ? BigInt(Date.now()) 
-            : undefined,
-        },
+        await prisma.taskData.update({
+          where: { id: typeof id === "number" ? id : parseInt(String(id)) },
+          data: {
+            taskStatus: taskStatus,
+            imageUrl: data.outputUrl ?? undefined,
+            replicateId: data.externalTaskId ?? undefined,
+            errorMsg: data.errorMsg ?? undefined,
+            executeEndTime: taskStatus === "Succeeded" || taskStatus === "Failed" 
+              ? BigInt(Date.now()) 
+              : undefined,
+          },
         });
       });
     },
     async findByExternalId(model: string, externalId: string): Promise<TaskRecord | null> {
       const rec = await withRetry(async () => {
-        return await prisma.fluxData.findFirst({ where: { model, replicateId: externalId } });
+        return await prisma.taskData.findFirst({ where: { model, replicateId: externalId } });
       });
       if (!rec) return null;
       return {
@@ -75,5 +75,3 @@ export function createPrismaTaskRepository(): TaskRepository {
     }
   };
 }
-
-

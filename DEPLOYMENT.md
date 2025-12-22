@@ -13,13 +13,13 @@ git commit -m "Initial commit: 可复用业务模块集合"
 
 ## 步骤 2: 创建 GitHub 仓库
 
-1. 在 GitHub 上创建一个新仓库（例如：`your-org/modules`）
+1. 在 GitHub 上创建一个新仓库（例如：`GiantClam/aiwebmodules`）
 2. 不要初始化 README、.gitignore 或 license（我们已经有了）
 
 ## 步骤 3: 连接并推送
 
 ```bash
-git remote add origin https://github.com/your-org/modules.git
+git remote add origin https://github.com/GiantClam/aiwebmodules.git
 git branch -M main
 git push -u origin main
 ```
@@ -30,7 +30,7 @@ git push -u origin main
 
 ```bash
 # 在你的项目中添加 submodule
-git submodule add https://github.com/your-org/modules.git modules
+git submodule add https://github.com/GiantClam/aiwebmodules.git modules
 
 # 更新 submodule
 git submodule update --remote modules
@@ -42,10 +42,10 @@ git submodule update --remote modules
 
 ```json
 {
-  "name": "@your-org/modules",
+  "name": "@giantclam/aiwebmodules",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-org/modules.git"
+    "url": "https://github.com/GiantClam/aiwebmodules.git"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
@@ -69,7 +69,7 @@ npm install @your-org/modules
 ### 方式三：直接克隆
 
 ```bash
-git clone https://github.com/your-org/modules.git
+git clone https://github.com/GiantClam/aiwebmodules.git
 # 然后复制到你的项目中
 ```
 
@@ -82,7 +82,7 @@ git clone https://github.com/your-org/modules.git
 import { runninghubAPI } from "@/modules/runninghub";
 
 // 如果使用 npm 包
-import { runninghubAPI } from "@your-org/modules/runninghub";
+import { runninghubAPI } from "@giantclam/aiwebmodules/runninghub";
 
 // 如果使用 submodule
 import { runninghubAPI } from "./modules/runninghub";

@@ -61,7 +61,7 @@ Cloudflare R2 存储模块。
 
 ```bash
 # 在你的项目中添加 submodule
-git submodule add https://github.com/your-org/modules.git modules
+git submodule add https://github.com/GiantClam/aiwebmodules.git modules
 
 # 或者使用 npm/yarn/pnpm 链接
 cd modules
@@ -84,7 +84,7 @@ cp -r modules /path/to/your-project/
 npm publish
 
 # 在你的项目中使用
-npm install @your-org/modules
+npm install @giantclam/aiwebmodules
 ```
 
 ## 📖 使用示例
@@ -92,7 +92,7 @@ npm install @your-org/modules
 ### RunningHub
 
 ```typescript
-import { runninghubAPI, createRunningHubClient } from '@your-org/modules/runninghub';
+import { runninghubAPI, createRunningHubClient } from '@giantclam/aiwebmodules/runninghub';
 
 // 使用单例
 const taskId = await runninghubAPI.createTaskGeneric({
@@ -110,8 +110,8 @@ const client = createRunningHubClient({
 ### Tasks
 
 ```typescript
-import { createVideoTaskWithR2Url } from '@your-org/modules/tasks';
-import { createRunningHubClient } from '@your-org/modules/runninghub';
+import { createVideoTaskWithR2Url } from '@giantclam/aiwebmodules/tasks';
+import { createRunningHubClient } from '@giantclam/aiwebmodules/runninghub';
 // 导入你实现的适配器
 import { createPrismaTaskRepository } from './adapters/prisma-repo';
 import { createPrismaTaskQueue } from './adapters/prisma-queue';
@@ -134,7 +134,7 @@ const result = await createVideoTaskWithR2Url(
 ### Auth
 
 ```typescript
-import { createAuthProvider } from '@your-org/modules/examples/auth/adapter.example';
+import { createAuthProvider } from '@giantclam/aiwebmodules/examples/auth/adapter.example';
 
 const auth = createAuthProvider({
   getCurrentUser: async () => {
@@ -149,7 +149,7 @@ const user = await auth.getCurrentUser();
 ### Cloudflare Storage
 
 ```typescript
-import { uploadBufferToR2, generatePresignedPutUrl } from '@your-org/modules/cloudflare-storage';
+import { uploadBufferToR2, generatePresignedPutUrl } from '@giantclam/aiwebmodules/cloudflare-storage';
 
 const publicUrl = await uploadBufferToR2(
   Buffer.from('content'),

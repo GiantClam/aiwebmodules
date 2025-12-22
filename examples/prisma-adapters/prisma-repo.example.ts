@@ -21,7 +21,7 @@ import type { CreateTaskParams, TaskRecord, TaskRepository } from '../../tasks/s
  * 创建基于 Prisma 的 TaskRepository 实现
  * 
  * 注意：此示例假设你的 Prisma schema 中有类似以下的结构：
- * - model FluxData {
+ * - model TaskData {
  *     id            Int
  *     userId        String?
  *     model         String
@@ -39,7 +39,7 @@ export function createPrismaTaskRepository(prisma: PrismaClient): TaskRepository
   return {
     async create(data: CreateTaskParams & { status?: string }): Promise<TaskRecord> {
       // 根据你的 Prisma schema 调整这里的实现
-      const rec = await (prisma as any).fluxData.create({
+      const rec = await (prisma as any).taskData.create({
         data: {
           userId: data.userId || null,
           model: data.model,
@@ -66,12 +66,12 @@ export function createPrismaTaskRepository(prisma: PrismaClient): TaskRepository
     },
     
     async update(id, data): Promise<void> {
-      await (prisma as any).fluxData.update({
+      await (prisma as any).taskData.update({
         where: { id: id as number },
         data: {
           taskStatus: data.status,
           imageUrl: data.outputUrl ?? undefined,
-          replicateId: data.externalId ?? undefined,
+          replicateId: data.externalTaskId ?? undefined,
           errorMsg: data.errorMsg ?? undefined,
           executeEndTime: data.status && ['succeeded', 'failed'].includes(data.status) 
             ? BigInt(Date.now()) 
@@ -81,7 +81,7 @@ export function createPrismaTaskRepository(prisma: PrismaClient): TaskRepository
     },
     
     async findByExternalId(model: string, externalId: string): Promise<TaskRecord | null> {
-      const rec = await (prisma as any).fluxData.findFirst({ 
+      const rec = await (prisma as any).taskData.findFirst({ 
         where: { model, replicateId: externalId } 
       });
       
